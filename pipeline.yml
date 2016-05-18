@@ -1,0 +1,27 @@
+jobs:
+- name: build-docker-test
+  public: true
+  serial: true
+  plan:
+  - get: docker-test
+    trigger: true
+  - put: docker-image
+    params:
+      build: docker-test
+
+resources:
+- name: docker-test
+  type: git
+  source:
+    uri: git@github.com:smgoller/docker-test.git
+    branch: master
+    private_key: {{github-private-key}}
+    paths: Dockerfile
+
+- name: docker-image
+  type: docker-image
+  source:
+    email: {{docker_email}}
+    username: {{docker_username}}
+    password: {{docker_password}}
+    repository: smgoller/docker-test
